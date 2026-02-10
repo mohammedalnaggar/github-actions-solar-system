@@ -100,9 +100,22 @@ jobs:
             username: ${{ vars.DOCKER_USERNAME }}
             password: ${{ secrets.DOCKER_PASSWORD }}
 
-        # - name: Build and Push Docker Image
-        #   uses: docker/build-push-action@v3
-        #   with:
-        #     context: .
-        #     push: true
-        #     tags: ${{ secrets.DOCKER_USERNAME }}/solar-system-app:latest
+        - name: Build and Push Docker Image
+          uses: docker/build-push-action@v3
+          with:
+            context: .
+            push: false
+            tags: ${{ vars.DOCKER_USERNAME }}/solar-system-app:${{ github.sha }}
+        
+        - name: Docker Test
+          run: |
+            docker run -d --name solar-system-app ${{ vars.DOCKER_USERNAME }}/solar-system-app:${{ github.sha }} \
+            -p 3000:3000 \
+            -e MONGO_URI=${{ env.MONGO_URI }} \
+            -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
+            -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}
+            
+            sleep 3
+            
+            echo "Testing Docker Container... using curl command to check if the application is running"  
+            curl -f http://localhost:3000/live
