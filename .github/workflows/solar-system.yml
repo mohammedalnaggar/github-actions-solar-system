@@ -24,6 +24,13 @@ jobs:
           uses: actions/setup-node@v4
           with:
             node-version: 20
+        
+        - name: Cache Node Modules
+          uses: actions/cache@v3
+          with:
+            path: node_modules
+            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
     
         - name: Install Dependencies
           run: npm install
@@ -57,6 +64,13 @@ jobs:
           with:
             node-version: ${{ matrix.node-version }}
 
+        - name: Cache Node Modules
+          uses: actions/cache@v3
+          with:
+            path: node_modules
+            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+    
         - name: install dependencies
           run: npm install
 
