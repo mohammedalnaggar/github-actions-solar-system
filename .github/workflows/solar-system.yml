@@ -40,7 +40,11 @@ jobs:
     
     code-coverage:
       name: Code-Coverage-Result
-      runs-on: ubuntu-latest
+      runs-on: ${{ matrix.operating-system }}
+      strategy:
+        matrix:
+          node-version: [18, 20]
+          operating-system: [ubuntu-latest, macos-latest]
       steps:
         - name: checkout repository
           uses: actions/checkout@v4
@@ -48,7 +52,7 @@ jobs:
         - name: setup nodejs version
           uses: actions/setup-node@v4
           with:
-            node-version: 18
+            node-version: ${{ matrix.node-version }}
 
         - name: install dependencies
           run: npm install
