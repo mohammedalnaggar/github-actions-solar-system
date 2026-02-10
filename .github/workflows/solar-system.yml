@@ -100,7 +100,7 @@ jobs:
             username: ${{ vars.DOCKER_USERNAME }}
             password: ${{ secrets.DOCKER_PASSWORD }}
 
-        - name: Build and Push Docker Image
+        - name: Build Docker Image
           uses: docker/build-push-action@v3
           with:
             context: .
@@ -121,3 +121,11 @@ jobs:
 
             echo "Testing Docker Container... using curl command to check if the application is running"  
             curl -sf http://127.0.0.1:3000/live
+        
+        - name: Build Docker Image
+          uses: docker/build-push-action@v3
+          with:
+            context: .
+            push: true
+            tags: ${{ vars.DOCKER_USERNAME }}/solar-system-app:${{ github.sha }}
+        
