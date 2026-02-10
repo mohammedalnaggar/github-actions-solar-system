@@ -15,6 +15,8 @@ jobs:
     unit-testing:
 
         name: Unit Testing
+# this will enable us to use a service container for mongo and run the unit tests, this will ensure that the unit tests are run in a consistent environment and that we have a clean slate for each test run, as the service container will be recreated for each test run.
+# and also by this we're not using prod mongo instance for testing, we're using a non-prod mongo instance which is running in a container, this will ensure that we don't have any issues with the prod mongo instance
         services:
           mongo:
             image: siddharth67/mongo-db:non-prod
@@ -58,6 +60,24 @@ jobs:
     code-coverage:
       name: Code-Coverage-Result
       runs-on: ${{ matrix.operating-system }}
+# running the code coverage job in a container to ensure 
+# that the code coverage is generated in a consistent environment and to avoid any issues related to dependencies or configurations on the host machine.
+# but with that in place the service container is just another container running beside the job container, so you dont need to map the ports and you can 
+# access the service container using the service name as the hostname and the default port of the service, in this case mongo:27017
+      container:
+        image: node:${{ matrix.node-version }}
+
+      services:
+          mongo:
+            image: siddharth67/mongo-db:non-prod
+            options:
+              --name mongo  # this is important to set the name of the service container so that you can use it as the hostname in the job container to access the service container, in this case mongo:27017
+            # ports:    ## this will be in place by default as both the job container and the service container share teh same network, so you can access the service container using the service name as the hostname and the default port of the service, in this case mongo:27017
+            #   - 27017:27017
+      env:
+          MONGO_URI: mongodb://mongo:27017/superData ## using the service name as the hostname and the default port of the service, in this case mongo:27017
+          MONGO_USERNAME: non-prod-user
+          MONGO_PASSWORD: non-prod-password
       strategy:
         matrix:
           node-version: [ 20]
@@ -69,10 +89,10 @@ jobs:
         - name: checkout repository
           uses: actions/checkout@v4
         
-        - name: setup nodejs version
-          uses: actions/setup-node@v4
-          with:
-            node-version: ${{ matrix.node-version }}
+        # - name: setup nodejs version
+        #   uses: actions/setup-node@v4
+        #   with:
+        #     node-version: ${{ matrix.node-version }}
 
         - name: Cache Node Modules
           uses: actions/cache@v3
