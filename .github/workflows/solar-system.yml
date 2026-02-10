@@ -109,7 +109,7 @@ jobs:
         
         - name: Docker Test
           run: |
-            docker images ls 
+            docker images
             docker run -d --name solar-system-app \
             -p 3000:3000 \
             -e MONGO_URI=${{ env.MONGO_URI }} \
@@ -120,4 +120,4 @@ jobs:
             sleep 3
 
             echo "Testing Docker Container... using curl command to check if the application is running"  
-            curl -f http://127.0.0.1:3000/live
+            curl -sf http://127.0.0.1:3000/live
