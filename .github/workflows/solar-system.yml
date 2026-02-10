@@ -51,7 +51,7 @@ jobs:
       runs-on: ${{ matrix.operating-system }}
       strategy:
         matrix:
-          node-version: [18, 20]
+          node-version: [ 20]
           operating-system: [ubuntu-latest]
           exclude:
             - node-version: 18
@@ -109,11 +109,13 @@ jobs:
         
         - name: Docker Test
           run: |
-            docker run -d --name solar-system-app ${{ vars.DOCKER_USERNAME }}/solar-system-app:${{ github.sha }} \
+            docker images ls 
+            docker run -d --name solar-system-app \
             -p 3000:3000 \
             -e MONGO_URI=${{ env.MONGO_URI }} \
             -e MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
-            -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }}
+            -e MONGO_PASSWORD=${{ env.MONGO_PASSWORD }} \
+            ${{ vars.DOCKER_USERNAME }}/solar-system-app:${{ github.sha }}
             
             sleep 3
 
