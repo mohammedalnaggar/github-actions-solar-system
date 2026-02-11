@@ -184,7 +184,7 @@ jobs:
           with:
             method: service-account
             k8s-url: ${{ secrets.STAGING_K8S_URL }}
-            k8s-secret: ${{ secrets.STAGING_K8S_SA_TOKEN }}
+            k8s-secret: ${{ secrets.STAGING_K8S_SA_SECRET }}
 
         
         - name: Setup Kubeconfig
