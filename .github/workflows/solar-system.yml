@@ -168,7 +168,7 @@ jobs:
     #           ghcr.io/${{ github.repository_owner }}/solar-system-app:${{ github.sha }}
 
 
-    dev-deploy:
+    staging-deployment:
       # needs: containerization
       runs-on: ubuntu-latest
       steps:
@@ -189,6 +189,6 @@ jobs:
         
         - name: Setup Kubeconfig
           run: |
-            kubectl version --short
+            kubectl version
             echo -----------
             kubectl get nodes
