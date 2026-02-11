@@ -166,3 +166,29 @@ jobs:
             tags: | 
               ${{ vars.DOCKER_USERNAME }}/solar-system-app:${{ github.sha }}
               ghcr.io/${{ github.repository_owner }}/solar-system-app:${{ github.sha }}
+
+
+    dev-deploy:
+      needs: containerization
+      runs-on: ubuntu-latest
+      steps:
+        - name: checkout repository
+          uses: actions/checkout@v6
+
+        - name: Install kubectl
+          uses: azure/setup-kubectl@v3
+          with:
+            version: '1.30'
+
+        - uses: azure/k8s-set-context@v4
+          with:
+            method: service-account
+            k8s-url: ${{ secrets.STAGING_K8S_URL }}
+            k8s-secret: ${{ secrets.STAGING_K8S_SA_TOKEN }}
+
+        
+        - name: Setup Kubeconfig
+          run: |
+            kubectl version --short
+            echo -----------
+            kubectl get nodes
